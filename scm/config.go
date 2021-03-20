@@ -128,17 +128,18 @@ func LoadDumped(path string) error {
 		}
 
 		var opcode int
+		var invokeType string
 		var name string
 		var parameterCount int
 
-		_, err = fmt.Sscanf(line, "0x%x %s %d", &opcode, &name, &parameterCount)
+		read, err := fmt.Sscanf(line, "%x (%s %d) %s", &opcode, &invokeType, &parameterCount, &name)
 
-		if err != nil {
+		if err != nil || read != 4 {
 			println("Unable to parse line '" + line + "'.\n")
 			continue
 		}
 
-		fmt.Printf("%s<0x%x>(%d)\n", name, opcode, parameterCount)
+		addPrototype(opcode, name, parameterCount, invokeType == "oper")
 	}
 
 	return nil
@@ -159,7 +160,13 @@ func DumpPrototypes(path string) error {
 	})
 
 	for _, prototype := range prototypeSlice {
-		fmt.Fprintf(&builder, "0x%x %s %d\n", prototype.opcode, prototype.name, prototype.parameterCount)
+		invokeType := "func"
+
+		if prototype.isOperator {
+			invokeType = "oper"
+		}
+
+		fmt.Fprintf(&builder, "%04x (%s %d) %s\n", prototype.opcode, invokeType, prototype.parameterCount, prototype.name)
 	}
 
 	return os.WriteFile(path, []byte(builder.String()), 0755)

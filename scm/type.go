@@ -97,19 +97,26 @@ func (dataType DataType) IsAbstract(abstract AbstractType) bool {
 	return dataType.Abstract == abstract
 }
 
-func (dataType DataType) IsVariable() bool {
+func (dataType DataType) IsLocal() bool {
 	switch dataType.Abstract {
-	case AbstractGlobal32:
-		return true
-	case AbstractLocal32:
-		return true
-	case AbstractGlobalString:
-		return true
-	case AbstractLocalString:
+	case AbstractLocal32, AbstractLocalString:
 		return true
 	}
 
 	return false
+}
+
+func (dataType DataType) IsGlobal() bool {
+	switch dataType.Abstract {
+	case AbstractGlobal32, AbstractGlobalString:
+		return true
+	}
+
+	return false
+}
+
+func (dataType DataType) IsVariable() bool {
+	return dataType.IsGlobal() || dataType.IsLocal()
 }
 
 func (dataType DataType) IsArrayElement() bool {

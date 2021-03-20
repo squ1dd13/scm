@@ -8,11 +8,16 @@ import (
 
 type instructionPrototype struct {
 	opcode         int
-	parameterCount int
 	name           string
+	parameterCount int
+	isOperator     bool
 }
 
 var prototypes map[int]instructionPrototype = make(map[int]instructionPrototype)
+
+func addPrototype(opcode int, name string, parameterCount int, isOperator bool) {
+	prototypes[opcode] = instructionPrototype{opcode: opcode, name: name, parameterCount: parameterCount, isOperator: isOperator}
+}
 
 func registerPrototype(opcode int, parameterCount int) {
 	prototypes[opcode] = instructionPrototype{opcode: opcode, parameterCount: parameterCount}
@@ -65,11 +70,32 @@ func (instruction Instruction) CodeString() string {
 
 	nameString := fmt.Sprintf("0x%x", instruction.Opcode)
 
+	var resultPointer *string = nil
+
 	if prototype, ok := prototypes[instruction.Opcode]; ok {
 		nameString = prototype.name
+
+		if prototype.isOperator {
+			if prototype.parameterCount == 1 {
+				operatorString := fmt.Sprintf("%s%s", prototype.name, parameterStrings[0])
+				resultPointer = &operatorString
+			} else if prototype.parameterCount == 2 {
+				operatorString := fmt.Sprintf("%s %s %s", parameterStrings[0], prototype.name, parameterStrings[1])
+				resultPointer = &operatorString
+			} else {
+				println(`Warning: Only unary and binary operators are supported.
+				Anything else will be treated like a normal instruction.`)
+			}
+		}
 	}
 
-	result := fmt.Sprintf("%s(%s)", nameString, parametersJoined)
+	var result string
+
+	if resultPointer != nil {
+		result = *resultPointer
+	} else {
+		result = fmt.Sprintf("%s(%s)", nameString, parametersJoined)
+	}
 
 	if instruction.InvertReturnValue {
 		result = fmt.Sprintf("!(%s)", result)

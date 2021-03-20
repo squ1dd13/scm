@@ -13,25 +13,25 @@ func main() {
 		panic(err)
 	}
 
-	loadError := scm.LoadPrototypes("/home/squ1dd13/Documents/Projects/Java/MSD/SASCM.ini")
+	// loadError := scm.LoadPrototypes("/home/squ1dd13/Documents/Projects/Java/MSD/SASCM.ini")
 
-	if loadError != nil {
-		panic(loadError)
-	}
+	// if loadError != nil {
+	// 	panic(loadError)
+	// }
 
-	loadError = scm.LoadPrototypeNames("/home/squ1dd13/Documents/Projects/Java/MSD/commands.ini")
+	// loadError = scm.LoadPrototypeNames("/home/squ1dd13/Documents/Projects/Java/MSD/commands.ini")
 
-	if loadError != nil {
-		panic(loadError)
-	}
+	// if loadError != nil {
+	// 	panic(loadError)
+	// }
 
-	dumpError := scm.DumpPrototypes("/home/squ1dd13/go/src/scm/prototypes.scmpt")
+	// dumpError := scm.DumpPrototypes("/home/squ1dd13/go/src/scm/data/prototypes.scmpt")
 
-	if dumpError != nil {
-		panic(dumpError)
-	}
+	// if dumpError != nil {
+	// 	panic(dumpError)
+	// }
 
-	scm.LoadDumped("/home/squ1dd13/go/src/scm/prototypes.scmpt")
+	scm.LoadDumped("/home/squ1dd13/go/src/scm/data/prototypes.scmpt")
 
 	reader := bytes.NewReader(codeBytes)
 
@@ -40,6 +40,10 @@ func main() {
 	for reader.Len() != 0 {
 		instruction := scm.ReadInstruction(reader)
 		instructions = append(instructions, instruction)
+
+		if instruction.Opcode == 0 {
+			continue
+		}
 
 		println(instruction.CodeString())
 	}

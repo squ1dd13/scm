@@ -109,7 +109,15 @@ func (value Value) CodeString() string {
 	}
 
 	if value.integer != nil {
-		return fmt.Sprint(*value.integer)
+		prefix := ""
+
+		if value.Type.IsLocal() {
+			prefix = "local_"
+		} else if value.Type.IsGlobal() {
+			prefix = "global_"
+		}
+
+		return prefix + fmt.Sprint(*value.integer)
 	}
 
 	if value.str != nil {
