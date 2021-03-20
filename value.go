@@ -33,14 +33,36 @@ type Value struct {
 	array   *ArrayAccess
 }
 
-func intFromBytes(bytes []byte) int64 {
-	v := int64(0)
+func intFromBytes(bites []byte) int64 {
+	reader := bytes.NewReader(bites)
 
-	for i, b := range bytes {
-		v |= int64(b << (i * 8))
+	switch len(bites) {
+	case 1:
+		{
+			var value int8
+			binary.Read(reader, binary.LittleEndian, &value)
+
+			return int64(value)
+		}
+
+	case 2:
+		{
+			var value int16
+			binary.Read(reader, binary.LittleEndian, &value)
+
+			return int64(value)
+		}
+
+	case 4:
+		{
+			var value int32
+			binary.Read(reader, binary.LittleEndian, &value)
+
+			return int64(value)
+		}
 	}
 
-	return v
+	panic(errors.New("invalid count"))
 }
 
 func ReadValue(reader *bytes.Reader) Value {
