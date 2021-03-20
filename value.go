@@ -27,10 +27,10 @@ type ArrayAccess struct {
 type Value struct {
 	Type DataType
 
-	integer *int64
-	float   *float32
-	str     *string
-	array   *ArrayAccess
+	Integer *int64
+	Float   *float32
+	String  *string
+	Array   *ArrayAccess
 }
 
 func intFromBytes(bites []byte) int64 {
@@ -82,7 +82,7 @@ func ReadValue(reader *bytes.Reader) Value {
 
 	if dataType.IsAbstract(AbstractInteger) || dataType.IsVariable() {
 		fromBytes := intFromBytes(buffer)
-		return Value{Type: dataType, integer: &fromBytes}
+		return Value{Type: dataType, Integer: &fromBytes}
 	}
 
 	if dataType.IsAbstract(AbstractFloat) {
@@ -93,7 +93,7 @@ func ReadValue(reader *bytes.Reader) Value {
 			panic(err)
 		}
 
-		return Value{Type: dataType, float: &floating}
+		return Value{Type: dataType, Float: &floating}
 	}
 
 	if dataType.IsAbstract(AbstractString) {
@@ -103,7 +103,7 @@ func ReadValue(reader *bytes.Reader) Value {
 			str = str[0:nullIndex]
 		}
 
-		return Value{Type: dataType, str: &str}
+		return Value{Type: dataType, String: &str}
 	}
 
 	if dataType.IsArrayElement() {
@@ -115,22 +115,22 @@ func ReadValue(reader *bytes.Reader) Value {
 			panic(err)
 		}
 
-		return Value{Type: dataType, array: &arrayAccess}
+		return Value{Type: dataType, Array: &arrayAccess}
 	}
 
 	return Value{}
 }
 
 func (value Value) CodeString() string {
-	if value.array != nil {
-		return fmt.Sprintf("0x%x[*0x%x]", value.array.FirstVariableOffset, value.array.IndexVariableOffset)
+	if value.Array != nil {
+		return fmt.Sprintf("0x%x[*0x%x]", value.Array.FirstVariableOffset, value.Array.IndexVariableOffset)
 	}
 
-	if value.float != nil {
-		return fmt.Sprint(*value.float)
+	if value.Float != nil {
+		return fmt.Sprint(*value.Float)
 	}
 
-	if value.integer != nil {
+	if value.Integer != nil {
 		prefix := ""
 
 		if value.Type.IsLocal() {
@@ -139,11 +139,11 @@ func (value Value) CodeString() string {
 			prefix = "global_"
 		}
 
-		return prefix + fmt.Sprint(*value.integer)
+		return prefix + fmt.Sprint(*value.Integer)
 	}
 
-	if value.str != nil {
-		return fmt.Sprintf("\"%s\"", *value.str)
+	if value.String != nil {
+		return fmt.Sprintf("\"%s\"", *value.String)
 	}
 
 	panic(errors.New("unable to produce code string"))
