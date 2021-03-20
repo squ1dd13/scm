@@ -36,8 +36,8 @@ type Value struct {
 func intFromBytes(bytes []byte) int64 {
 	v := int64(0)
 
-	for i := 0; i < len(bytes); i++ {
-		v |= int64(bytes[i] << i * 8)
+	for i, b := range bytes {
+		v |= int64(b << (i * 8))
 	}
 
 	return v
