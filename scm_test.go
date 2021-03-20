@@ -13,12 +13,6 @@ func TestSCM(t *testing.T) {
 		panic(err)
 	}
 
-	err = LoadDumped()
-
-	if err != nil {
-		panic(err)
-	}
-
 	reader := bytes.NewReader(codeBytes)
 
 	instructions := make([]Instruction, 0)

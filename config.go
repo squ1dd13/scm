@@ -140,7 +140,6 @@ func LoadDumped() error {
 		read, err := fmt.Sscanf(line, "%x (%s %d) %s", &opcode, &invokeType, &parameterCount, &name)
 
 		if err != nil || read != 4 {
-			println("Unable to parse line '" + line + "'.\n")
 			continue
 		}
 
@@ -177,4 +176,12 @@ func DumpPrototypes(path string) error {
 	}
 
 	return os.WriteFile(path, []byte(builder.String()), 0755)
+}
+
+func init() {
+	err := LoadDumped()
+
+	if err != nil {
+		panic(err)
+	}
 }
