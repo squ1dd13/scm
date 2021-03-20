@@ -18,6 +18,7 @@ func readLines(path string) ([]string, error) {
 	return strings.Split(string(fileBytes), "\n"), nil
 }
 
+// Load parameter counts from an SASCM.ini file.
 func LoadPrototypes(path string) error {
 	lines, err := readLines(path)
 
@@ -65,6 +66,7 @@ func LoadPrototypes(path string) error {
 	return nil
 }
 
+// Load prototype names from a commands.def file.
 func LoadPrototypeNames(path string) error {
 	lines, err := readLines(path)
 
@@ -107,6 +109,9 @@ func LoadPrototypeNames(path string) error {
 	return nil
 }
 
+// Load all prototypes from a prototypes.scmpt file. Use this once the
+// SASCM.ini and commands.def files have been loaded and the prototypes
+// dumped.
 func LoadDumped(path string) error {
 	lines, err := readLines(path)
 
@@ -145,6 +150,8 @@ func LoadDumped(path string) error {
 	return nil
 }
 
+// Dump the prototype map. Use this after loading SASCM.ini and commands.def to
+// produce a .scmpt file at `path`.
 func DumpPrototypes(path string) error {
 	builder := strings.Builder{}
 

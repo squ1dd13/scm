@@ -1,3 +1,3 @@
-module gta_scm
+module github.com/Squ1dd13/scm
 
-go 1.15
+go 1.16
