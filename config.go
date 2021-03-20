@@ -1,6 +1,7 @@
 package scm
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"sort"
@@ -109,15 +110,14 @@ func LoadPrototypeNames(path string) error {
 	return nil
 }
 
+//go:embed data/prototypes.scmpt
+var prototypeFileString string
+
 // Load all prototypes from a prototypes.scmpt file. Use this once the
 // SASCM.ini and commands.def files have been loaded and the prototypes
 // dumped.
-func LoadDumped(path string) error {
-	lines, err := readLines(path)
-
-	if err != nil {
-		return err
-	}
+func LoadDumped() error {
+	lines := strings.Split(prototypeFileString, "\n")
 
 	for _, dirtyLine := range lines {
 		commentIndex := strings.IndexRune(dirtyLine, ';')

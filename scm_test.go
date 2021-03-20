@@ -13,7 +13,7 @@ func TestSCM(t *testing.T) {
 		panic(err)
 	}
 
-	err = LoadDumped("data/prototypes.scmpt")
+	err = LoadDumped()
 
 	if err != nil {
 		panic(err)
@@ -25,7 +25,13 @@ func TestSCM(t *testing.T) {
 
 	for reader.Len() != 0 {
 		instruction := ReadInstruction(reader)
-		instructions = append(instructions, instruction)
+
+		if instruction == nil {
+			println("Bad instruction, stopping.")
+			break
+		}
+
+		instructions = append(instructions, *instruction)
 
 		if instruction.Opcode == 0 {
 			continue

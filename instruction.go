@@ -38,7 +38,7 @@ type Instruction struct {
 	Arguments         []Value
 }
 
-func ReadInstruction(reader *bytes.Reader) Instruction {
+func ReadInstruction(reader *bytes.Reader) *Instruction {
 	var opcodeBytes [2]byte
 	reader.Read(opcodeBytes[:])
 
@@ -50,13 +50,17 @@ func ReadInstruction(reader *bytes.Reader) Instruction {
 		Arguments:         []Value{},
 	}
 
-	prototype := prototypes[instruction.Opcode]
+	prototype, found := prototypes[instruction.Opcode]
+
+	if !found {
+		return nil
+	}
 
 	for i := 0; i < prototype.parameterCount; i++ {
 		instruction.Arguments = append(instruction.Arguments, ReadValue(reader))
 	}
 
-	return instruction
+	return &instruction
 }
 
 func (instruction Instruction) CodeString() string {
